@@ -4,8 +4,8 @@
 #include "ESPAsyncTCP.h"
 #include <Arduino_JSON.h>
 
-const char* ssid = "BSC";
-const char* password = "32bsc2021";
+const char* ssid = "CAFER";
+const char* password = "poyraz.1963";
 
 typedef struct struct_message {
   int id;

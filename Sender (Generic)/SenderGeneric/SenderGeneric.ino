@@ -19,7 +19,7 @@ const long interval = 10000;
 
 unsigned int readingId = 0;
 
-constexpr char WIFI_SSID[] = "BSC";
+constexpr char WIFI_SSID[] = "CAFER";
 
 int32_t getWiFiChannel(const char *ssid) {
   if (int32_t n = WiFi.scanNetworks()) {
