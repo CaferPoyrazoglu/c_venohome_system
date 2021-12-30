@@ -10,15 +10,13 @@ message msg;
 
 int role1_Durumu = 0;
 
-bool roleDurumDegisimi = true;
-
 void OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len) {
   memcpy(&msg, incomingData, sizeof(msg));
   Serial.print("Relay - 1");
   Serial.println(msg.role1);
   role1_Durumu = msg.role1;
   Serial.println();
-  roleDurumDegisimi = true;
+
 }
  
 void setup() {
@@ -37,8 +35,10 @@ void setup() {
 }
 
 void loop() {
-  if(roleDurumDegisimi)
+  if(role1_Durumu == 1)
   {
-    digitalWrite(5,role1_Durumu);  
+    digitalWrite(RELAY,HIGH);  
+  }else{
+    digitalWrite(RELAY,LOW); 
   }
 }

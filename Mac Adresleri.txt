@@ -1,4 +1,4 @@
-ESP-01:  	c4:5b:be:67:9c:ef
+ESP-01:  	c4:5b:be:67:9c:ef    	{0xC4, 0x5B, 0xBE, 0x67, 0x9C, 0xEF};
 
 Nodemcu: 	3c:61:05:e4:a8:4f
 

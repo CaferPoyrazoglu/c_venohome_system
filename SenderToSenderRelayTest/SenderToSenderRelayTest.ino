@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <espnow.h>
 
-uint8_t broadcastAddress[] = {0xC4, 0x5B, 0xBE, 0x67, 0x9C, 0xEC};
+uint8_t broadcastAddress[] = {0xC4, 0x5B, 0xBE, 0x67, 0x9C, 0xEF};
 
 typedef struct message  {
  int relay1;
@@ -47,7 +47,7 @@ void setup() {
 void loop() {
   if ((millis() - lastTime) > timerDelay) {
     // Set values to send
-    myData.relay1 = 0;
+    myData.relay1 = ((int)random(0, 2));;
 
     // Send message via ESP-NOW
     esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
