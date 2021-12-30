@@ -1,7 +1,20 @@
+#include <Arduino.h>
 #include <espnow.h>
 #include <ESP8266WiFi.h>
+#include <Hash.h>
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
 
 #define SENDER_ID 1
+#define DHTPIN 14
+#define DHTTYPE DHT11
+
+float t = 0.0;
+float h = 0.0;
+
+DHT dht(DHTPIN, DHTTYPE);
 
 uint8_t broadcastAddress[] = {0x3C, 0x61, 0x05, 0xE4, 0xA8, 0x4F};
 
@@ -44,6 +57,7 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
  
 void setup() {
   Serial.begin(9600);
+  dht.begin();
   WiFi.mode(WIFI_STA);
   int32_t channel = getWiFiChannel(WIFI_SSID);
   WiFi.printDiag(Serial); 
@@ -66,9 +80,25 @@ void loop() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
+    float newT = dht.readTemperature();
+    if (isnan(newT)) {
+      Serial.println("Failed to read from DHT sensor!");
+    }
+    else {
+      t = newT;
+      Serial.println(t);
+    }
+    float newH = dht.readHumidity();
+    if (isnan(newH)) {
+      Serial.println("Failed to read from DHT sensor!");
+    }
+    else {
+      h = newH;
+      Serial.println(h);
+    }
     myData.id = SENDER_ID;
-    myData.temp = ((int)random(0, 40));
-    myData.hum = ((int)random(0, 100));
+    myData.temp = t;
+    myData.hum = h;
     myData.readingId = readingId++;
     esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
   }
