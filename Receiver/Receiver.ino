@@ -46,11 +46,9 @@ void OnDataRecv(uint8_t * mac_addr, uint8_t *incomingData, uint8_t len) {
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML>
 <html>
-
 <head>
     <title>Small Paket Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel="icon" href="data:,">
     <style>
         html {
@@ -58,33 +56,26 @@ const char index_html[] PROGMEM = R"rawliteral(
             display: inline-block;
             text-align: center;
         }
-
         h1 {
             font-size: 2rem;
         }
-
         body {
             margin: 0;
         }
-
         .topnav {
             overflow: hidden;
             background-color: #2f4468;
             color: white;
             font-size: 1.7rem;
         }
-
         .content {
             padding: 20px;
         }
-
         .card {
             background-color: rgb(255, 255, 255);
             box-shadow: 2px 2px 12px 1px rgba(0, 0, 0, 0.5);
             border-radius: 16px;
-
         }
-
         .cards {
             max-width: 700px;
             margin: 0 auto;
@@ -92,44 +83,36 @@ const char index_html[] PROGMEM = R"rawliteral(
             grid-gap: 2rem;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         }
-
         .reading {
             font-size: 2.8rem;
         }
-
         .timestamp {
             color: #000000;
             font-size: 1rem;
             font-weight: bold;
         }
-
         .card-title {
             font-size: 1.2rem;
             font-weight: bold;
         }
-
         .card.temperature {
             color: #000000;
         }
-
         .card.humidity {
             color: #50B8B4;
         }
-
         .switch {
             position: relative;
             display: inline-block;
             width: 60px;
             height: 34px;
         }
-
         /* Hide default HTML checkbox */
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
-
         /* The slider */
         .slider {
             position: absolute;
@@ -142,7 +125,6 @@ const char index_html[] PROGMEM = R"rawliteral(
             -webkit-transition: .4s;
             transition: .4s;
         }
-
         .slider:before {
             position: absolute;
             content: "";
@@ -154,34 +136,27 @@ const char index_html[] PROGMEM = R"rawliteral(
             -webkit-transition: .4s;
             transition: .4s;
         }
-
         input:checked+.slider {
             background-color: #2196F3;
         }
-
         input:focus+.slider {
             box-shadow: 0 0 1px #2196F3;
         }
-
         input:checked+.slider:before {
             -webkit-transform: translateX(26px);
             -ms-transform: translateX(26px);
             transform: translateX(26px);
         }
-
         /* Rounded sliders */
         .slider.round {
             border-radius: 34px;
         }
-
         .slider.round:before {
             border-radius: 50%;
         }
     </style>
 </head>
-
 <body style="background-color: rgb(59, 124, 72);">
-
     <div class="content">
         <div class="cards">
             <div class="card temperature">
@@ -189,14 +164,12 @@ const char index_html[] PROGMEM = R"rawliteral(
                 <p><span class="reading"><span id="t1"></span> &deg;C</span></p>
                 <p class="timestamp">Son Okunma Zamani</p>
                 <p class="timestamp"><span id="d1"></span></p>
-
             </div>
             <div class="card temperature">
                 <p class="card-title"><i class="fas fa-thermometer-half"></i> Nem</p>
                 <p><span class="reading"><span id="h1"></span> &deg;%</span></p>
                 <p class="timestamp">Son Okunma Zamani</p>
                 <p class="timestamp"><span id="d2"></span></p>
-
             </div>
             <div class="card temperature">
                 <p class="card-title"><i class="fas fa-thermometer-half"></i> Su Kesici</p>
@@ -204,7 +177,6 @@ const char index_html[] PROGMEM = R"rawliteral(
                             <input type="checkbox">
                             <span class="slider round"></span>
                         </label></span></p>
-
             </div>
             <div class="card temperature">
                 <p class="card-title"><i class="fas fa-thermometer-half"></i> Gaz Kesici</p>
@@ -212,16 +184,13 @@ const char index_html[] PROGMEM = R"rawliteral(
                             <input type="checkbox">
                             <span class="slider round"></span>
                         </label></span></p>
-
             </div>
-
             <div class="card temperature">
                 <p class="card-title"><i class="fas fa-thermometer-half"></i> Role - 1</p>
                 <p><span class="reading"><span id="rly1"></span> <label class="switch">
                             <input type="checkbox">
                             <span class="slider round"></span>
                         </label></span></p>
-
             </div>
             <div class="card temperature">
                 <p class="card-title"><i class="fas fa-thermometer-half"></i> Role - 2</p>
@@ -229,9 +198,7 @@ const char index_html[] PROGMEM = R"rawliteral(
                             <input type="checkbox">
                             <span class="slider round"></span>
                         </label></span></p>
-
             </div>
-
         </div>
     </div>
     <script>
@@ -247,7 +214,6 @@ const char index_html[] PROGMEM = R"rawliteral(
         }
         if (!!window.EventSource) {
             var source = new EventSource('/events');
-
             source.addEventListener('open', function (e) {
                 console.log("Events Connected");
             }, false);
@@ -256,11 +222,9 @@ const char index_html[] PROGMEM = R"rawliteral(
                     console.log("Events Disconnected");
                 }
             }, false);
-
             source.addEventListener('message', function (e) {
                 console.log("message", e.data);
             }, false);
-
             source.addEventListener('new_readings', function (e) {
                 console.log("new_readings", e.data);
                 var obj = JSON.parse(e.data);
@@ -268,12 +232,10 @@ const char index_html[] PROGMEM = R"rawliteral(
                 document.getElementById("h1").innerHTML = obj.humidity.toFixed(1);
                 document.getElementById("d1").innerHTML = getDateTime();
                 document.getElementById("d2").innerHTML = getDateTime();
-
             }, false);
         }
     </script>
 </body>
-
 </html>)rawliteral";
 
 void setup() {
