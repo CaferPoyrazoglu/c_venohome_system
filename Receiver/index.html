@@ -4,11 +4,16 @@
 <head>
     <title>Small Paket Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Varela+Round" />
     <link rel="icon" href="data:,">
     <style>
         html {
-            font-family: Arial;
+            font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+            font-size: 20px;
+            font-style: normal;
+            font-variant: normal;
+            font-weight: 500;
+            line-height: 26.4px;
             display: inline-block;
             text-align: center;
         }
@@ -34,7 +39,7 @@
 
         .card {
             background-color: rgb(255, 255, 255);
-            box-shadow: 2px 2px 12px 1px rgba(0, 0, 0, 0.5);
+            box-shadow: 2px 2px 24px 1px rgb(180, 180, 180);
             border-radius: 16px;
 
         }
@@ -48,17 +53,18 @@
         }
 
         .reading {
-            font-size: 2.8rem;
+            font-size: 36px;
+            font-weight: 500;
         }
 
         .timestamp {
             color: #000000;
-            font-size: 1rem;
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 400;
         }
 
         .card-title {
-            font-size: 1.2rem;
+            font-size: 22px;
             font-weight: bold;
         }
 
@@ -134,31 +140,30 @@
     </style>
 </head>
 
-<body style="background-color: rgb(59, 124, 72);">
-
+<body style="background-color: rgb(231, 231, 231);">
     <div class="content">
         <div class="cards">
             <div class="card temperature">
-                <p class="card-title"><i class="fas fa-thermometer-half"></i> Sicaklik</p>
+                <p class="card-title"><i class="fas fa-thermometer-half"></i> Sıcaklık</p>
                 <p><span class="reading"><span id="t1"></span> &deg;C</span></p>
-                <p class="timestamp">Son Okunma Zamani</p>
+                <p class="timestamp">Son Okunma Zamanı</p>
                 <p class="timestamp"><span id="d1"></span></p>
-
             </div>
             <div class="card temperature">
                 <p class="card-title"><i class="fas fa-thermometer-half"></i> Nem</p>
                 <p><span class="reading"><span id="h1"></span> &deg;%</span></p>
-                <p class="timestamp">Son Okunma Zamani</p>
+                <p class="timestamp">Son Okunma Zamanı</p>
                 <p class="timestamp"><span id="d2"></span></p>
             </div>
+
+
             <div class="card temperature">
-                <p class="card-title"><i class="fas fa-thermometer-half"></i> Role - 1</p>
+                <p class="card-title"><i class="fas fa-thermometer-half"></i> Röle - 1</p>
                 <p><span class="reading"><span id="rly1"></span> <label class="switch">
                             <input type="checkbox">
                             <span class="slider round"></span>
                         </label></span></p>
             </div>
-
 
         </div>
     </div>
@@ -175,7 +180,6 @@
         }
         if (!!window.EventSource) {
             var source = new EventSource('/events');
-
             source.addEventListener('open', function (e) {
                 console.log("Events Connected");
             }, false);
@@ -184,11 +188,9 @@
                     console.log("Events Disconnected");
                 }
             }, false);
-
             source.addEventListener('message', function (e) {
                 console.log("message", e.data);
             }, false);
-
             source.addEventListener('new_readings', function (e) {
                 console.log("new_readings", e.data);
                 var obj = JSON.parse(e.data);
@@ -196,7 +198,6 @@
                 document.getElementById("h1").innerHTML = obj.humidity.toFixed(1);
                 document.getElementById("d1").innerHTML = getDateTime();
                 document.getElementById("d2").innerHTML = getDateTime();
-
             }, false);
         }
     </script>
