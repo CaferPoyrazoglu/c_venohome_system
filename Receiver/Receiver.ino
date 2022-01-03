@@ -4,8 +4,8 @@
 #include "ESPAsyncTCP.h"
 #include <Arduino_JSON.h>
 
-const char* ssid = "CAFER";
-const char* password = "poyraz.1963";
+const char* ssid = "BSC";
+const char* password = "32bsc2021";
 
 typedef struct struct_message {
   int id;
@@ -190,21 +190,21 @@ const char index_html[] PROGMEM = R"rawliteral(
     <div class="content">
         <div class="cards">
             <div class="card temperature">
-                <p class="card-title"><i class="fas fa-thermometer-half"></i> Sıcaklık</p>
+                <p class="card-title"><i class="fas fa-thermometer-half"></i> Sicaklik</p>
                 <p><span class="reading"><span id="t1"></span> &deg;C</span></p>
-                <p class="timestamp">Son Okunma Zamanı</p>
+                <p class="timestamp">Son Okunma Zamani</p>
                 <p class="timestamp"><span id="d1"></span></p>
             </div>
             <div class="card temperature">
                 <p class="card-title"><i class="fas fa-thermometer-half"></i> Nem</p>
                 <p><span class="reading"><span id="h1"></span> &deg;%</span></p>
-                <p class="timestamp">Son Okunma Zamanı</p>
+                <p class="timestamp">Son Okunma Zamani</p>
                 <p class="timestamp"><span id="d2"></span></p>
             </div>
 
 
             <div class="card temperature">
-                <p class="card-title"><i class="fas fa-thermometer-half"></i> Röle - 1</p>
+                <p class="card-title"><i class="fas fa-thermometer-half"></i> Role - 1</p>
                 <p><span class="reading"><span id="rly1"></span> <label class="switch">
                             <input type="checkbox">
                             <span class="slider round"></span>
