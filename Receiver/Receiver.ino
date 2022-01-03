@@ -267,7 +267,7 @@ void setup() {
 
   esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
   esp_now_register_send_cb(OnDataSent);
-  esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_SLAVE, WiFi.channel(), NULL, 0);
+  esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, WiFi.channel(), NULL, 0);
   esp_now_register_recv_cb(OnDataRecv);
 
    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
