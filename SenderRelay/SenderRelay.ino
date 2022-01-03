@@ -36,7 +36,10 @@ void setup() {
   Serial.begin(9600);
   pinMode(RELAY,OUTPUT);
   WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
+  int32_t channel = 5;
+  wifi_promiscuous_enable(1);
+  wifi_set_channel(channel);
+  wifi_promiscuous_enable(0);
 
   if (esp_now_init() != 0) {
     Serial.println("Error initializing ESP-NOW");
@@ -45,7 +48,7 @@ void setup() {
 
   esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
   esp_now_register_send_cb(OnDataSent);
-  esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, 1, NULL, 0);
+  esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, channel , NULL, 0);
   esp_now_register_recv_cb(OnDataRecv);
 }
  
