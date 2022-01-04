@@ -68,6 +68,7 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML>
 <html>
+
 <head>
     <title>Small Paket Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -84,26 +85,33 @@ const char index_html[] PROGMEM = R"rawliteral(
             display: inline-block;
             text-align: center;
         }
+
         h1 {
             font-size: 2rem;
         }
+
         body {
             margin: 0;
         }
+
         .topnav {
             overflow: hidden;
-            background-color: #2f4468;
+            background-color: #314568;
             color: white;
             font-size: 1.7rem;
         }
+
         .content {
             padding: 20px;
         }
+
         .card {
             background-color: rgb(255, 255, 255);
             box-shadow: 2px 2px 24px 1px rgb(180, 180, 180);
             border-radius: 16px;
+
         }
+
         .cards {
             max-width: 700px;
             margin: 0 auto;
@@ -111,105 +119,116 @@ const char index_html[] PROGMEM = R"rawliteral(
             grid-gap: 2rem;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         }
+
         .reading {
             font-size: 36px;
             font-weight: 500;
         }
+
         .timestamp {
             color: #000000;
             font-size: 16px;
             font-weight: 400;
         }
+
         .card-title {
             font-size: 22px;
             font-weight: bold;
         }
+
         .card.temperature {
             color: #000000;
         }
+
         .card.humidity {
             color: #50B8B4;
         }
+
         .switch {
             position: relative;
             display: inline-block;
-            width: 60px;
-            height: 34px;
+            width: 120px;
+            height: 68px
         }
-        /* Hide default HTML checkbox */
+
         .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+            display: none
         }
-        /* The slider */
+
         .slider {
             position: absolute;
-            cursor: pointer;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
+            border-radius: 34px
         }
+
         .slider:before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
+            height: 52px;
+            width: 52px;
+            left: 8px;
+            bottom: 8px;
+            background-color: #fff;
             -webkit-transition: .4s;
             transition: .4s;
+            border-radius: 68px
         }
+
         input:checked+.slider {
-            background-color: #2196F3;
+            background-color: #2196F3
         }
-        input:focus+.slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
+
         input:checked+.slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 34px;
-        }
-        .slider.round:before {
-            border-radius: 50%;
+            -webkit-transform: translateX(52px);
+            -ms-transform: translateX(52px);
+            transform: translateX(52px)
         }
     </style>
 </head>
+
 <body style="background-color: rgb(231, 231, 231);">
     <div class="content">
         <div class="cards">
             <div class="card temperature">
-                <p class="card-title"><i class="fas fa-thermometer-half"></i> Sicaklik</p>
+                <p class="card-title"><i class="fas fa-thermometer-half"></i> Sıcaklık</p>
                 <p><span class="reading"><span id="t1"></span> &deg;C</span></p>
-                <p class="timestamp">Son Okunma Zamani</p>
+                <p class="timestamp">Son Okunma Zamanı</p>
                 <p class="timestamp"><span id="d1"></span></p>
             </div>
             <div class="card temperature">
                 <p class="card-title"><i class="fas fa-thermometer-half"></i> Nem</p>
                 <p><span class="reading"><span id="h1"></span> &deg;%</span></p>
-                <p class="timestamp">Son Okunma Zamani</p>
+                <p class="timestamp">Son Okunma Zamanı</p>
                 <p class="timestamp"><span id="d2"></span></p>
             </div>
-            <div class="card temperature">
-                <p class="card-title"><i class="fas fa-thermometer-half"></i> Role - 1</p>
-                <p><span class="reading"><span id="rly1"></span> <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label></span></p>
-            </div>
+
+            <h4>Relay 1</h4>
+            <label class="switch">
+                <input type="checkbox" onchange="toggleCheckbox(this)" id="1"><span class="slider"></span>
+            </label>
+
+            <h4>Relay 2</h4>
+            <label class="switch">
+                <input type="checkbox" onchange="toggleCheckbox(this)" id="2"><span class="slider"></span>
+            </label>
+
         </div>
     </div>
     <script>
+        function toggleCheckbox(element) {
+            var xhr = new XMLHttpRequest();
+            if (element.checked) {
+                xhr.open("GET", "/update?relay=" + element.id + "&state=1", true);
+            } else {
+                xhr.open("GET", "/update?relay=" + element.id + "&state=0", true);
+            }
+            xhr.send();
+        }
+
         function getDateTime() {
             var currentdate = new Date();
             var datetime = currentdate.getDate() + "/" +
@@ -244,6 +263,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         }
     </script>
 </body>
+
 </html>)rawliteral";
  
 void setup() {
