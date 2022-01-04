@@ -36,7 +36,7 @@ void setup() {
   Serial.begin(9600);
   pinMode(RELAY,OUTPUT);
   WiFi.mode(WIFI_STA);
-  int32_t channel = 5;
+  int32_t channel = 9;
   wifi_promiscuous_enable(1);
   wifi_set_channel(channel);
   wifi_promiscuous_enable(0);

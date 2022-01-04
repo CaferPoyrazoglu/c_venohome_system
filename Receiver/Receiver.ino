@@ -4,8 +4,8 @@
 #include "ESPAsyncTCP.h"
 #include <Arduino_JSON.h>
 
-const char* ssid = "CAFER";
-const char* password = "poyraz.1963";
+const char* ssid = "BSC";
+const char* password = "32bsc2021";
 
 uint8_t broadcastAddress[] = {0xC4, 0x5B, 0xBE, 0x67, 0x9C, 0xEF};
 
