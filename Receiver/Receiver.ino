@@ -3,9 +3,15 @@
 #include "ESPAsyncWebServer.h"
 #include "ESPAsyncTCP.h"
 #include <Arduino_JSON.h>
+#define RELAY_NO true
 
 const char* ssid = "BSC";
 const char* password = "32bsc2021";
+
+const char* PARAM_INPUT_1 = "relay";  
+const char* PARAM_INPUT_2 = "state";
+
+
 
 uint8_t broadcastAddress[] = {0xC4, 0x5B, 0xBE, 0x67, 0x9C, 0xEF};
 
@@ -229,16 +235,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             xhr.send();
         }
 
-        function getDateTime() {
-            var currentdate = new Date();
-            var datetime = currentdate.getDate() + "/" +
-                (currentdate.getMonth() + 1) + "/" +
-                currentdate.getFullYear() + " at " +
-                currentdate.getHours() + ":" +
-                currentdate.getMinutes() + ":" +
-                currentdate.getSeconds();
-            return datetime;
-        }
+       
         if (!!window.EventSource) {
             var source = new EventSource('/events');
             source.addEventListener('open', function (e) {
@@ -293,6 +290,34 @@ void setup() {
    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/html", index_html);
   });
+
+   server.on("/update", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    String inputMessage;
+    String inputParam;
+    String inputMessage2;
+    String inputParam2;
+    // GET input1 value on <ESP_IP>/update?relay=<inputMessage>
+    if (request->hasParam(PARAM_INPUT_1) & request->hasParam(PARAM_INPUT_2)) {
+      inputMessage = request->getParam(PARAM_INPUT_1)->value();
+      inputParam = PARAM_INPUT_1;
+      inputMessage2 = request->getParam(PARAM_INPUT_2)->value();
+      inputParam2 = PARAM_INPUT_2;
+      if(RELAY_NO){
+        myData.relay1 = 0;
+        esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+      }
+      else{
+        myData.relay1 = 0;
+        esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+      }
+    }
+    else {
+      inputMessage = "No message sent";
+      inputParam = "none";
+    }
+    Serial.println(inputMessage + inputMessage2);
+    request->send(200, "text/plain", "OK");
+  });
    
   events.onConnect([](AsyncEventSourceClient *client){
     if(client->lastId()){
@@ -306,13 +331,5 @@ void setup() {
 }
  
 void loop() {
-    if(temp == 2){
-      temp = 0;
-    }
-    
-    myData.relay1 = temp;
-    temp++;
-    esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-    events.send("ping",NULL,millis());
-    delay(2000);
+   
   }
