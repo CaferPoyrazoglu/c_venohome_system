@@ -13,7 +13,8 @@ const char* PARAM_INPUT_2 = "state";
 
 
 
-uint8_t broadcastAddress[] = {0xC4, 0x5B, 0xBE, 0x67, 0x9C, 0xEF};
+uint8_t role1Mac[] = {0xC4, 0x5B, 0xBE, 0x67, 0x9C, 0xEF};
+uint8_t role2Mac[] = {0xC4, 0x5B, 0xC4, 0x67, 0xC4, 0x67};
 
 typedef struct message  {
  int relay1;
@@ -62,12 +63,12 @@ void OnDataRecv(uint8_t * mac_addr, uint8_t *incomingData, uint8_t len) {
 
 // Callback when data is sent
 void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
-  Serial.print("Last Packet Send Status: ");
+  Serial.print("PAKET DURUMU: ");
   if (sendStatus == 0){
-    Serial.println("Delivery success");
+    Serial.println("Paket Basariyla Gonderildi!");
   }
   else{
-    Serial.println("Delivery fail");
+    Serial.println("Hata!");
   }
 }
 
@@ -200,15 +201,15 @@ const char index_html[] PROGMEM = R"rawliteral(
     <div class="content">
         <div class="cards">
             <div class="card temperature">
-                <p class="card-title"><i class="fas fa-thermometer-half"></i> Sıcaklık</p>
+                <p class="card-title"><i class="fas fa-thermometer-half"></i> Sicaklik</p>
                 <p><span class="reading"><span id="t1"></span> &deg;C</span></p>
-                <p class="timestamp">Son Okunma Zamanı</p>
+                <p class="timestamp">Son Okunma Zamani</p>
                 <p class="timestamp"><span id="d1"></span></p>
             </div>
             <div class="card temperature">
                 <p class="card-title"><i class="fas fa-thermometer-half"></i> Nem</p>
                 <p><span class="reading"><span id="h1"></span> &deg;%</span></p>
-                <p class="timestamp">Son Okunma Zamanı</p>
+                <p class="timestamp">Son Okunma Zamani</p>
                 <p class="timestamp"><span id="d2"></span></p>
             </div>
 
@@ -224,7 +225,10 @@ const char index_html[] PROGMEM = R"rawliteral(
 
         </div>
     </div>
-    <script>
+ 
+
+      <script>
+      
         function toggleCheckbox(element) {
             var xhr = new XMLHttpRequest();
             if (element.checked) {
@@ -235,7 +239,6 @@ const char index_html[] PROGMEM = R"rawliteral(
             xhr.send();
         }
 
-       
         if (!!window.EventSource) {
             var source = new EventSource('/events');
             source.addEventListener('open', function (e) {
@@ -258,6 +261,7 @@ const char index_html[] PROGMEM = R"rawliteral(
                 document.getElementById("d2").innerHTML = getDateTime();
             }, false);
         }
+  
     </script>
 </body>
 
@@ -284,7 +288,8 @@ void setup() {
 
   esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
   esp_now_register_send_cb(OnDataSent);
-  esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, WiFi.channel(), NULL, 0);
+  esp_now_add_peer(role1Mac, ESP_NOW_ROLE_COMBO, WiFi.channel(), NULL, 0);
+  esp_now_add_peer(role2Mac, ESP_NOW_ROLE_COMBO, WiFi.channel(), NULL, 0);
   esp_now_register_recv_cb(OnDataRecv);
 
    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -296,26 +301,39 @@ void setup() {
     String inputParam;
     String inputMessage2;
     String inputParam2;
+    int roleNo;
     // GET input1 value on <ESP_IP>/update?relay=<inputMessage>
     if (request->hasParam(PARAM_INPUT_1) & request->hasParam(PARAM_INPUT_2)) {
       inputMessage = request->getParam(PARAM_INPUT_1)->value();
       inputParam = PARAM_INPUT_1;
       inputMessage2 = request->getParam(PARAM_INPUT_2)->value();
       inputParam2 = PARAM_INPUT_2;
-      if(RELAY_NO){
-        myData.relay1 = 0;
-        esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-      }
-      else{
-        myData.relay1 = 0;
-        esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-      }
+   
     }
     else {
       inputMessage = "No message sent";
       inputParam = "none";
     }
-    Serial.println(inputMessage + inputMessage2);
+
+    if(inputParam + inputMessage == "relay1"){
+      
+      Serial.println(inputParam + inputMessage + " - " + "Yeni Durum:" + inputMessage2);
+      myData.relay1 = inputMessage2.toInt();
+      esp_now_send(role1Mac, (uint8_t *) &myData, sizeof(myData));
+      
+    } 
+    
+    if (inputParam + inputMessage == "relay2"){
+
+      Serial.println(inputParam + inputMessage + " - " + "Yeni Durum:" + inputMessage2);
+      myData.relay1 = inputMessage2.toInt();
+      esp_now_send(role2Mac, (uint8_t *) &myData, sizeof(myData));
+      
+    }
+   
+    
+    
+    
     request->send(200, "text/plain", "OK");
   });
    
