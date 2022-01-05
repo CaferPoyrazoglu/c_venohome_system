@@ -6,10 +6,19 @@
 #include <ESPAsyncWebServer.h>
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
 #define SENDER_ID 1
 #define DHTPIN 14
 #define DHTTYPE DHT11
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 float t = 0.0;
 float h = 0.0;
@@ -32,7 +41,7 @@ const long interval = 10000;
 
 unsigned int readingId = 0;
 
-constexpr char WIFI_SSID[] = "BSC";
+constexpr char WIFI_SSID[] = "CAFER";
 
 int32_t getWiFiChannel(const char *ssid) {
   if (int32_t n = WiFi.scanNetworks()) {
@@ -58,6 +67,20 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
 void setup() {
   Serial.begin(9600);
   dht.begin();
+
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
+  
+  delay(2000);
+  display.clearDisplay();
+
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+ 
+
+  
   WiFi.mode(WIFI_STA);
   int32_t channel = getWiFiChannel(WIFI_SSID);
   WiFi.printDiag(Serial); 
@@ -96,6 +119,16 @@ void loop() {
       h = newH;
       Serial.println(h);
     }
+     display.clearDisplay();
+     display.setCursor(0, 10);
+     display.println(dht.readTemperature());
+
+     display.setCursor(0, 30);
+     display.println(dht.readHumidity());
+     
+     display.display();
+
+  
     myData.id = SENDER_ID;
     myData.temp = t;
     myData.hum = h;
