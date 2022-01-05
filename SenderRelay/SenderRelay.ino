@@ -55,8 +55,8 @@ void setup() {
 void loop() {
   if(role1_Durumu == 1)
   {
-    digitalWrite(RELAY,HIGH);  
+    digitalWrite(RELAY,LOW);  
   }else{
-    digitalWrite(RELAY,LOW); 
+    digitalWrite(RELAY,HIGH); 
   }
 }
