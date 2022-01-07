@@ -5,8 +5,8 @@
 #include <Arduino_JSON.h>
 #define RELAY_NO true
 
-const char* ssid = "CAFER";
-const char* password = "poyraz.1963";
+const char* ssid = "BSC";
+const char* password = "32bsc2021";
 
 const char* PARAM_INPUT_1 = "relay";  
 const char* PARAM_INPUT_2 = "state";

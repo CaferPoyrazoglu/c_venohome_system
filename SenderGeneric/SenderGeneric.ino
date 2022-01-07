@@ -41,19 +41,6 @@ const long interval = 10000;
 
 unsigned int readingId = 0;
 
-constexpr char WIFI_SSID[] = "CAFER";
-
-int32_t getWiFiChannel(const char *ssid) {
-  if (int32_t n = WiFi.scanNetworks()) {
-    for (uint8_t i=0; i<n; i++) {
-      if (!strcmp(ssid, WiFi.SSID(i).c_str())) {
-        return WiFi.channel(i);
-      }
-    }
-  }
-  return 0;
-}
-
 void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
   Serial.print("Son Gonderilen Paket Durumu: ");
   if (sendStatus == 0){
@@ -82,10 +69,9 @@ void setup() {
 
   
   WiFi.mode(WIFI_STA);
-  int32_t channel = getWiFiChannel(WIFI_SSID);
   WiFi.printDiag(Serial); 
   wifi_promiscuous_enable(1);
-  wifi_set_channel(channel);
+  wifi_set_channel(9);
   wifi_promiscuous_enable(0);
   WiFi.printDiag(Serial);
 
