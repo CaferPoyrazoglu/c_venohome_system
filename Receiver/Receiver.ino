@@ -3,6 +3,7 @@
 #include "ESPAsyncWebServer.h"
 #include "ESPAsyncTCP.h"
 #include <Arduino_JSON.h>
+#include <ESPAsyncWiFiManager.h> 
 #define RELAY_NO true
 
 const char* ssid = "BSC";
@@ -31,6 +32,7 @@ struct_message incomingReadings;
 message  myData;
 
 JSONVar board;
+DNSServer dns;
 
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
@@ -269,12 +271,12 @@ const char index_html[] PROGMEM = R"rawliteral(
  
 void setup() {
   Serial.begin(9600);
+
+  AsyncWiFiManager wifiManager(&server,&dns);
+  
   WiFi.mode(WIFI_AP_STA);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Setting as a Wi-Fi Station..");
-  }
+  wifiManager.autoConnect("Venohome");
+ 
 
   Serial.print("Station IP Address: ");
   Serial.println(WiFi.localIP());
@@ -288,8 +290,8 @@ void setup() {
 
   esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
   esp_now_register_send_cb(OnDataSent);
-  esp_now_add_peer(role1Mac, ESP_NOW_ROLE_COMBO, WiFi.channel(), NULL, 0);
-  esp_now_add_peer(role2Mac, ESP_NOW_ROLE_COMBO, WiFi.channel(), NULL, 0);
+  esp_now_add_peer(role1Mac, ESP_NOW_ROLE_COMBO, 2, NULL, 0);
+  esp_now_add_peer(role2Mac, ESP_NOW_ROLE_COMBO, 2, NULL, 0);
   esp_now_register_recv_cb(OnDataRecv);
 
    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
