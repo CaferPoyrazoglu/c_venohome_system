@@ -10,6 +10,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "Adafruit_MCP9808.h"
 
 #define SENDER_ID 1
 #define DHTPIN 14
@@ -19,6 +20,7 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+Adafruit_MCP9808 tempsensor = Adafruit_MCP9808();
 
 float t = 0.0;
 float h = 0.0;
@@ -55,6 +57,12 @@ void setup() {
   Serial.begin(9600);
   dht.begin();
 
+   if (!tempsensor.begin()) 
+  {
+    Serial.println("Couldn't find MCP9808!");
+    while (1);
+  }
+
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
@@ -88,8 +96,9 @@ void setup() {
 void loop() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
+
     float newT = dht.readTemperature();
+   
     if (isnan(newT)) {
       Serial.println("Failed to read from DHT sensor!");
     }
@@ -103,20 +112,45 @@ void loop() {
     }
     else {
       h = newH;
+     
       Serial.println(h);
     }
-     display.clearDisplay();
-     display.setCursor(0, 10);
-     display.println(dht.readTemperature());
 
-     display.setCursor(0, 30);
-     display.println(dht.readHumidity());
+    
+    previousMillis = currentMillis;
+
+     float c = tempsensor.readTempC();
+     c = c - 4.23;
+     float f = c * 9.0 / 5.0 + 32;
+     String nem = "";
+     nem.concat(h);
+     
+     
+      
+     display.clearDisplay();
+     
+     display.setCursor(0, 6);
+     display.println(" Venohome");
+     
+     display.setCursor(0, 28);
+
+     display.print("  ");
+     display.print(c);
+     display.print(" C");
+
+     display.setCursor(0, 48);
+     display.print("Nem:");
+     display.print("   %");
+     display.print(nem);
+     
+
+     
      
      display.display();
 
   
     myData.id = SENDER_ID;
-    myData.temp = t;
+    myData.temp = c;
     myData.hum = h;
     myData.readingId = readingId++;
     esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
