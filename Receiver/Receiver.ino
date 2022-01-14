@@ -257,8 +257,8 @@ const char index_html[] PROGMEM = R"rawliteral(
             source.addEventListener('new_readings', function (e) {
                 console.log("new_readings", e.data);
                 var obj = JSON.parse(e.data);
-                document.getElementById("t1").innerHTML = obj.temperature.toFixed(1);
-                document.getElementById("h1").innerHTML = obj.humidity.toFixed(1);
+                document.getElementById("t1").innerHTML = obj.temperature.toFixed(2);
+                document.getElementById("h1").innerHTML = obj.humidity.toFixed(0);
                 document.getElementById("d1").innerHTML = getDateTime();
                 document.getElementById("d2").innerHTML = getDateTime();
             }, false);
@@ -290,8 +290,8 @@ void setup() {
 
   esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
   esp_now_register_send_cb(OnDataSent);
-  esp_now_add_peer(role1Mac, ESP_NOW_ROLE_COMBO, 2, NULL, 0);
-  esp_now_add_peer(role2Mac, ESP_NOW_ROLE_COMBO, 2, NULL, 0);
+  esp_now_add_peer(role1Mac, ESP_NOW_ROLE_COMBO, 9, NULL, 0);
+  esp_now_add_peer(role2Mac, ESP_NOW_ROLE_COMBO, 9, NULL, 0);
   esp_now_register_recv_cb(OnDataRecv);
 
    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
