@@ -120,7 +120,7 @@ void loop() {
     previousMillis = currentMillis;
 
      float c = tempsensor.readTempC();
-     c = c - 4.23;
+     c = c - 7.65;
      float f = c * 9.0 / 5.0 + 32;
      String nem = "";
      nem.concat(h);
